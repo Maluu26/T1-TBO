@@ -4,12 +4,12 @@
 int size_error(int src, int dst, int size) {
 
     if(src >= size || dst >= size) {
-        printf("%sERROR: Edge of %d to %d could not be inserted. Source or destiny node is bigger than graph's size\n%s",
+        printf("%sERROR: Edge from %d to %d could not be inserted. Source or destiny node is bigger than graph's size\n%s",
         RED, src, dst, RESET);
         return 1;
     }
     else if(src < 0 || dst < 0) {
-        printf("%sERROR: Edge of %d to %d could not be inserted. Source or destiny node is smaller than graph's size\n%s",
+        printf("%sERROR: Edge from %d to %d could not be inserted. Source or destiny node is smaller than graph's size\n%s",
         RED, src, dst, RESET);
         return 1;  
     }
