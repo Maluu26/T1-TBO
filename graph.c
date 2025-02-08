@@ -61,6 +61,10 @@ void remove_edge(graph * g, int src, int dst) {
 
 }
 
+float get_edge(graph * g, int src, int dst) {
+    return g -> matrix[src][dst];
+}
+
 void print_graph(graph * g) {
 
     for(int i = 0; i < g -> size; i++) {

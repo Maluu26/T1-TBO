@@ -30,6 +30,14 @@ void insert_edge(graph * g, int src, int dst, float w);
 void remove_edge(graph * g, int src, int dst);
 
 /**
+ * Gets the value of an edge if it exists
+ * @param g graph to get edge from
+ * @param src source node
+ * @param dst destiny node
+ */
+float get_edge(graph * g, int src, int dst);
+
+/**
  * Prints a graph
  * @param g graph to print
  */
