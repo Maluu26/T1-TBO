@@ -1,5 +1,7 @@
 #include "graph.h"
 #include "colors.h"
+#include <math.h>
+#include "PQ.h"
 
 int size_error(int src, int dst, int size) {
 
@@ -17,11 +19,56 @@ int size_error(int src, int dst, int size) {
 return 0;
 }
 
+// Node related code
+
 struct node {
     int id;
     float dist;
     int prt;
 };
+
+node * create_node(int id, float dist, int prt) {
+
+    node * n = (node *) calloc(1, sizeof(node));
+    n -> id = id;
+    n -> dist = dist;
+    n -> prt;
+
+return n;
+}
+
+node ** create_nodes(int size) {
+
+    node ** ns = (node **) calloc(size, sizeof(node *));
+
+    for(int i = 0; i < size; i++) {
+        ns[i] = create_node(i, INFINITY, -1);
+    }
+
+return ns;
+}
+
+int get_id(node * n) {
+    return n -> id;
+}
+
+float get_distance(node * n) {
+    return n -> dist;
+}
+
+int get_parent(node * n) {
+    return n -> prt;
+}
+
+void set_distance(node * n, float new_distance) {
+    n -> dist = new_distance;
+}
+
+void set_parent(node * n, int prt_id) {
+    n -> prt = prt_id;
+}
+
+// Graph related code
 
 struct graph {
     int size;
@@ -47,16 +94,20 @@ graph * create_graph(int size) {
 return g;
 }
 
+int get_size(graph * g) {
+    return g -> size;
+}
+
 void insert_edge(graph * g, int src, int dst, float w) {
 
-    if(size_error(src, dst, g -> size)) return;
+    if(size_error(src, dst, get_size(g))) return;
     g -> matrix[src][dst] = w;
 
 }
 
 void remove_edge(graph * g, int src, int dst) {
 
-    if(size_error(src, dst, g -> size)) return;
+    if(size_error(src, dst, get_size(g))) return;
     g -> matrix[src][dst] = 0;
 
 }
@@ -67,8 +118,8 @@ float get_edge(graph * g, int src, int dst) {
 
 void print_graph(graph * g) {
 
-    for(int i = 0; i < g -> size; i++) {
-        for(int j = 0; j < g -> size; j++) {
+    for(int i = 0; i < get_size(g); i++) {
+        for(int j = 0; j < get_size(g); j++) {
             float v = g -> matrix[i][j];
             if(v == 0) printf("%.1f ", v);
             else printf("%s%.1f %s", CYAN, v, RESET);
@@ -80,7 +131,7 @@ void print_graph(graph * g) {
 
 void free_graph(graph * g) {
 
-    for(int i = 0; i < g -> size; i++) {
+    for(int i = 0; i < get_size(g); i++) {
         free(g -> matrix[i]);
     }
     free(g -> matrix);
@@ -88,10 +139,33 @@ void free_graph(graph * g) {
 
 }
 
+void relax(node ** ns, int id) {
+
+    for()
+
+}
+
 node ** dijkstra(graph * g, int src) {
 
-    //implement dijkstra!!
+    int min_id = 0;
 
+    node ** ns = create_nodes(get_size(g));
+    set_distance(ns[src], 0);
+    set_parent(ns[src], src);
+
+    PQ * hp = createPQ(get_size(g));
+    for(int i = 0; i < get_size(g); i++) {
+        insertIntoPQ(hp, get_distance(ns[i]), i);
+    }
+    
+    while(!isPQEmpty(hp)) {
+        // waiting for fix in pq
+        break;
+    }
+
+    destroyPQ(hp);
+
+return ns;
 }
 
 void free_nodes(node ** n, int size) {
