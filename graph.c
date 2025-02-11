@@ -19,15 +19,16 @@ int size_error(int src, int dst, int size) {
 return 0;
 }
 
-// Node related code
+// NODE RELATED CODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 struct node {
     int id;
-    float dist;
+    double dist;
     int prt;
+    node * next;
 };
 
-node * create_node(int id, float dist, int prt) {
+node * create_node(int id, double dist, int prt) {
 
     node * n = (node *) calloc(1, sizeof(node));
     n -> id = id;
@@ -52,7 +53,7 @@ int get_id(node * n) {
     return n -> id;
 }
 
-float get_distance(node * n) {
+double get_distance(node * n) {
     return n -> dist;
 }
 
@@ -60,7 +61,11 @@ int get_parent(node * n) {
     return n -> prt;
 }
 
-void set_distance(node * n, float new_distance) {
+node * get_next(node * n) {
+    return n -> next;
+}
+
+void set_distance(node * n, double new_distance) {
     n -> dist = new_distance;
 }
 
@@ -68,11 +73,98 @@ void set_parent(node * n, int prt_id) {
     n -> prt = prt_id;
 }
 
-// Graph related code
+void set_next(node * n, node * nxt) {
+    n -> next = nxt;
+}
+
+void free_node(node * n) {
+    free(n);
+}
+
+void free_nodes_list(node * n) {
+    if(get_next(n) != NULL) free_nodes_list(get_next(n));
+    free(n);
+}
+
+void free_nodes_array(node ** n, int size) {
+
+    for(int i = 0; i < size; i++) {
+        free(n[i]);
+    }
+    free(n);
+
+}
+
+// LIST RELATED CODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+typedef struct list list;
+
+struct list {
+    node * first;
+    node * last;
+};
+
+void init_list(list * l) {
+    l -> first = NULL;
+    l -> last = NULL;
+}
+
+void insert(list * l, int id, double dist) {
+    
+    node * n = create_node(id, dist, -1);
+
+    if(l -> first == NULL) {
+        l -> first = n;
+        l -> last = n;
+    }
+    else {
+        set_next(l -> last, n);
+        l -> last = n;
+    }
+    
+}
+
+double find(list * l, int id) {
+
+    if(!l -> first) return 0;
+
+    node * checker = l -> first;
+    while(checker && get_id(checker) != id) {
+        checker = get_next(checker);
+    }
+
+    if(checker) return get_distance(checker);
+    else return 0;
+
+}
+
+void print_list(list * l) {
+
+    node * checker = l -> first;
+    while(checker) {
+        printf("node %d (%.1f) ", get_id(checker), get_distance(checker));
+        checker = get_next(checker);
+    }
+
+}
+
+void free_list(list * l) {
+
+    if(!l -> first) {
+        free(l);
+        return;
+    }
+
+    free_nodes_list(l -> first);
+    free(l);
+
+}
+
+// GRAPH RELATED CODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 struct graph {
     int size;
-    float ** matrix;
+    list ** ns_list;
 };
 
 graph * create_graph(int size) {
@@ -85,10 +177,11 @@ graph * create_graph(int size) {
     graph * g = (graph *) calloc(1, sizeof(graph));
 
     g -> size = size;
-    g -> matrix = (float **) calloc(size, sizeof(float *));
+    g -> ns_list = (list **) calloc(size, sizeof(list *));
 
     for(int i = 0; i < size; i++) {
-        g -> matrix[i] = (float *) calloc(size, sizeof(float));
+        g -> ns_list[i] = (list *) calloc(size, sizeof(list));
+        init_list(g -> ns_list[i]);
     }
 
 return g;
@@ -98,32 +191,29 @@ int get_size(graph * g) {
     return g -> size;
 }
 
-void insert_edge(graph * g, int src, int dst, float w) {
+void insert_edge(graph * g, int src, int dst, double w) {
 
     if(size_error(src, dst, get_size(g))) return;
-    g -> matrix[src][dst] = w;
+    insert(g -> ns_list[src], dst, w);
 
 }
 
-void remove_edge(graph * g, int src, int dst) {
+//void remove_edge(graph * g, int src, int dst) {
+//
+//    if(size_error(src, dst, get_size(g))) return;
+//    g -> matrix[src][dst] = 0;
+//
+//}
 
-    if(size_error(src, dst, get_size(g))) return;
-    g -> matrix[src][dst] = 0;
-
-}
-
-float get_edge(graph * g, int src, int dst) {
-    return g -> matrix[src][dst];
+double get_edge(graph * g, int src, int dst) {
+    return find(g -> ns_list[src], dst);
 }
 
 void print_graph(graph * g) {
 
     for(int i = 0; i < get_size(g); i++) {
-        for(int j = 0; j < get_size(g); j++) {
-            float v = g -> matrix[i][j];
-            if(v == 0) printf("%.1f ", v);
-            else printf("%s%.1f %s", CYAN, v, RESET);
-        }
+        printf("%sNODE %d Adjacency List:%s ", GREEN, i, RESET);
+        print_list(g -> ns_list[i]);
         printf("\n");
     }
 
@@ -132,16 +222,14 @@ void print_graph(graph * g) {
 void free_graph(graph * g) {
 
     for(int i = 0; i < get_size(g); i++) {
-        free(g -> matrix[i]);
+        free_list(g -> ns_list[i]);
     }
-    free(g -> matrix);
+    free(g -> ns_list);
     free(g);
 
 }
 
 void relax(node ** ns, int id) {
-
-    for()
 
 }
 
@@ -166,13 +254,4 @@ node ** dijkstra(graph * g, int src) {
     destroyPQ(hp);
 
 return ns;
-}
-
-void free_nodes(node ** n, int size) {
-
-    for(int i = 0; i < size; i++) {
-        free(n[i]);
-    }
-    free(n);
-
 }
