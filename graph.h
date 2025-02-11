@@ -19,7 +19,7 @@ graph * create_graph(int size);
  * @param dst destiny node
  * @param w edge's weight
  */
-void insert_edge(graph * g, int src, int dst, float w);
+void insert_edge(graph * g, int src, int dst, double w);
 
 /**
  * Turns the value of the edge to 0
@@ -35,8 +35,13 @@ void remove_edge(graph * g, int src, int dst);
  * @param src source node
  * @param dst destiny node
  */
-float get_edge(graph * g, int src, int dst);
+double get_edge(graph * g, int src, int dst);
 
+/**
+ * Gets the size of graph
+ * @param g graph to get size of
+ * @return size of graph
+ */
 int get_size(graph * g);
 
 /**
