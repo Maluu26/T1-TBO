@@ -67,7 +67,13 @@ int getPQSize(PQ *queue);
  * @param queque priority queue
  * @return the minimal value inside of the priority queue
  */
-float returnMin(PQ *queue);
+float returnMinDist(PQ *queue);
+
+/***
+ * @param queque priority queue
+ * @return node of the minimal value inside of the priority queue
+ */
+int returnMinIndex(PQ *queue);
 /***
  * Frees the memory space occupied
  * @param queque priority queue

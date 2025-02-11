@@ -4,12 +4,25 @@
 #include<stdlib.h>
 #include<stdbool.h>
 
+typedef struct pqItem {
+    float distance;
+    int index;
+}PQItem ;
+
+
 struct pq{
     int *queuePositions;
-    float *heap;
+    PQItem *heap;
     int maxnodes;
     int size;
 };
+
+void exchPQ(PQItem *p, int index1, int index2){
+    PQItem aux = p[index1];
+    p[index1] = p[index2];
+    p[index2]= aux;
+
+}
 bool valid_queue(PQ *queue){
     
     if(!queue){
@@ -30,14 +43,17 @@ PQ *createPQ(int size){
     PQ *heap = malloc(sizeof(PQ));
     heap->size = 0;
     heap->maxnodes = size;
-    heap->heap = malloc(sizeof(float)*(size+1));
+    heap->heap = malloc(sizeof(PQItem)*(size+1));
     heap->queuePositions = malloc(sizeof(int)*(size));
     
     for(int i = 0;i<heap->maxnodes;i++){
+        heap->heap[i].index = -1;
+        heap->heap[i].distance = 10000000;
         heap->queuePositions[i] = -1;
-        heap->heap[i] = 10000000;
     }
-    heap->heap[size] = -1;
+    heap->heap[size].index = -1;
+    heap->heap[size].distance = 10000000;
+   
     return heap;
 
 }
@@ -54,9 +70,9 @@ void fixUp(PQ *queue, int node, int i){
    if(!valid_queue(queue)) return;
    
    
-   while(i>1 && less(queue->heap[i], queue->heap[i/2])){
-        int newPosition = findNode(queue->queuePositions, i/2 ,queue->maxnodes);
-        exch(queue->heap[i], queue->heap[i/2]);
+   while(i>1 && less(queue->heap[i].distance, queue->heap[i/2].distance)){
+        int newPosition = queue->heap[i/2].index;
+        exchPQ(queue->heap,i, i/2);
         exch(queue->queuePositions[node], queue->queuePositions[newPosition]);
         i = i/2;  
    }
@@ -66,7 +82,8 @@ void insertIntoPQ(PQ *queue,float minDistance, int node){
     
     if(!valid_queue(queue)) return;
     queue->size++;
-    queue->heap[queue->size] = minDistance;
+    queue->heap[queue->size].distance = minDistance;
+    queue->heap[queue->size].index = node;
     queue->queuePositions[node] = queue->size;
     fixUp(queue, node, queue->size);
     
@@ -80,16 +97,15 @@ void fixDown(PQ *queue, int k){
     while(k*2<=queue->size){
         int j = k*2;
         
-        if (j < queue->size && queue->heap[j] > queue->heap[j+1]){
+        if (j < queue->size && queue->heap[j].distance > queue->heap[j+1].distance){
                 j++;
             }
-        if (!(queue->heap[k]>queue->heap[j])) {
+        if (!(queue->heap[k].distance>queue->heap[j].distance)) {
             break;
         }
-        
-        exch(queue->heap[k], queue->heap[j]);
-        int p1 = findNode(queue->queuePositions, k,queue->maxnodes);
-        int p2 = findNode(queue->queuePositions, j, queue->maxnodes);
+        int p1 = queue->heap[j].index;
+        int p2 = queue->heap[k].index;
+        exchPQ(queue->heap,k, j);
         exch(queue->queuePositions[p1], queue->queuePositions[p2]);
         k = j;
         }
@@ -99,13 +115,14 @@ float removeFromPQ(PQ *queue){
    
     if(!valid_queue(queue)) return;
 
-    int p1 = findNode(queue->queuePositions, 1,queue->maxnodes);
-    int p2 = findNode(queue->queuePositions, queue->size, queue->maxnodes);
-    exch(queue->heap[1], queue->heap[queue->size]);
+    int p1 = queue->heap[1].index;
+    int p2 = queue->heap[queue->size].index;
     exch(queue->queuePositions[p1], queue->queuePositions[p2]);
+    exchPQ(queue->heap,1,queue->size);
+    
     queue->size--;
     fixDown(queue, 1);
-    return queue->heap[queue->size+1];
+    return queue->heap[1].index;
 
 }
 
@@ -113,7 +130,7 @@ void changePositionInPQ(PQ *queue, int nodeIndex, float distance){
 
     if(!valid_queue(queue)) return;
     int position = queue->queuePositions[nodeIndex];
-    queue->heap[position] = distance;
+    queue->heap[position].distance = distance;
     fixUp(queue,nodeIndex, position);
     
      
@@ -126,10 +143,16 @@ int getPQSize(PQ *queue){
    
 }
 
-float returnMin(PQ *queue){
+float returnMinDist(PQ *queue){
    
     if(!valid_queue(queue)) return;
-    return queue->heap[1];
+    return queue->heap[1].distance;
+
+}
+int returnMinIndex(PQ *queue){
+   
+    if(!valid_queue(queue)) return;
+    return queue->heap[1].index;
 
 }
 void destroyPQ(PQ *queue){   
