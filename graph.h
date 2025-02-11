@@ -37,6 +37,8 @@ void remove_edge(graph * g, int src, int dst);
  */
 float get_edge(graph * g, int src, int dst);
 
+int get_size(graph * g);
+
 /**
  * Prints a graph
  * @param g graph to print
