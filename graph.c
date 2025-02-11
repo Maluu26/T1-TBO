@@ -148,6 +148,10 @@ void print_list(list * l) {
 
 }
 
+node * get_first(list * l) {
+    return l -> first;
+}
+
 void free_list(list * l) {
 
     if(!l -> first) {
@@ -229,8 +233,15 @@ void free_graph(graph * g) {
 
 }
 
-void relax(node ** ns, int id) {
+int relax(node ** ns, node * checker, int id) {
 
+    if(get_distance(ns[get_id(checker)]) > get_distance(checker) + get_distance(ns[id])) {
+        set_distance(ns[get_id(checker)], get_distance(checker));
+        set_parent(ns[get_id(checker)], id);
+        return 1;
+    }
+
+return 0;
 }
 
 node ** dijkstra(graph * g, int src) {
@@ -248,6 +259,12 @@ node ** dijkstra(graph * g, int src) {
     
     while(!isPQEmpty(hp)) {
         // waiting for fix in pq
+        //TO DO!!!!!!!!!!!!!!!!!!!!!
+        int id = 0; //THIS ID SHOULD BE RETURNED FROM PQ DELMIN
+        node * checker = get_first(g -> ns_list[id]);
+        while(checker) {
+            if(relax(ns, checker, id)) changePositionInPQ(hp, get_id(checker), get_distance(ns[get_id(checker)]));
+        }
         break;
     }
 
