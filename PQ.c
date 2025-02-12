@@ -33,7 +33,7 @@ bool valid_queue(PQ *queue){
 }
 bool isPQEmpty(PQ *queue){
     
-    if(!valid_queue(queue)) return;
+    if(!valid_queue(queue)) return true;
     return (queue->size == 0);
 
 }
@@ -92,14 +92,13 @@ void insertIntoPQ(PQ *queue,float minDistance, int node){
 void fixDown(PQ *queue, int k){
     
     if(!valid_queue(queue)) return;
-    
    
     while(k*2<=queue->size){
         int j = k*2;
-        
+            
         if (j < queue->size && queue->heap[j].distance > queue->heap[j+1].distance){
-                j++;
-            }
+                    j++;
+        }
         if (!(queue->heap[k].distance>queue->heap[j].distance)) {
             break;
         }
@@ -107,13 +106,13 @@ void fixDown(PQ *queue, int k){
         int p2 = queue->heap[k].index;
         exchPQ(queue->heap,k, j);
         exch(queue->queuePositions[p1], queue->queuePositions[p2]);
-        k = j;
-        }
-
+         k = j;
+    }
+    
 }
-float removeFromPQ(PQ *queue){
+int removeFromPQ(PQ *queue){
    
-    if(!valid_queue(queue)) return;
+    if(!valid_queue(queue)) return -1;
 
     int p1 = queue->heap[1].index;
     int p2 = queue->heap[queue->size].index;
@@ -138,20 +137,20 @@ void changePositionInPQ(PQ *queue, int nodeIndex, float distance){
 
 int getPQSize(PQ *queue){   
    
-    if(!valid_queue(queue)) return;
+    if(!valid_queue(queue)) return 0;
     return queue->size;
    
 }
 
 float returnMinDist(PQ *queue){
    
-    if(!valid_queue(queue)) return;
+    if(!valid_queue(queue)) return -1;
     return queue->heap[1].distance;
 
 }
 int returnMinIndex(PQ *queue){
    
-    if(!valid_queue(queue)) return;
+    if(!valid_queue(queue)) return -1;
     return queue->heap[1].index;
 
 }

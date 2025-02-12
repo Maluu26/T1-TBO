@@ -47,9 +47,9 @@ void fixDown(PQ *queue, int k);
 /*** 
  * Returns the minimal value of the priority queue and decreases its size;
  * @param queue priority queue
- * @return the minimal value of the priority queue
+ * @return the node associated with the minimal value of the priority queue
  */
-float removeFromPQ(PQ *queue);
+int removeFromPQ(PQ *queue);
 /***
  * Alters the previous distance of a node to a new smaller one and adjusts its position ;
  * @param queue priority queue
