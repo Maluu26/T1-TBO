@@ -86,7 +86,7 @@ void free_nodes_list(node * n) {
     free(n);
 }
 
-void free_nodes_array(node ** n, int size) {
+void free_nodes(node ** n, int size) {
 
     for(int i = 0; i < size; i++) {
         free(n[i]);
@@ -109,7 +109,7 @@ void init_list(list * l) {
     l -> last = NULL;
 }
 
-void insert(list * l, int id, double dist) {
+void insertl(list * l, int id, double dist) {
     
     node * n = create_node(id, dist, -1);
 
@@ -124,7 +124,34 @@ void insert(list * l, int id, double dist) {
     
 }
 
-double find(list * l, int id) {
+void removel(list * l, int id) {
+
+    if(!l -> first) return;
+
+    node * last = NULL;
+    node * checker = l -> first;
+
+    while(checker && get_id(checker) != id) {
+        last = checker;
+        checker = get_next(checker);
+    }
+
+    if(checker == l -> first) {
+        l -> first = NULL;
+        l -> last = NULL;
+    }
+    else if(checker == l -> last) {
+        set_next(last, NULL);
+        l -> last = last;
+    }
+    else {
+        set_next(last, get_next(checker));
+    }
+    free_node(checker);
+
+}
+
+double findl(list * l, int id) {
 
     if(!l -> first) return 0;
 
@@ -198,19 +225,19 @@ int get_size(graph * g) {
 void insert_edge(graph * g, int src, int dst, double w) {
 
     if(size_error(src, dst, get_size(g))) return;
-    insert(g -> ns_list[src], dst, w);
+    insertl(g -> ns_list[src], dst, w);
 
 }
 
-//void remove_edge(graph * g, int src, int dst) {
-//
-//    if(size_error(src, dst, get_size(g))) return;
-//    g -> matrix[src][dst] = 0;
-//
-//}
+void remove_edge(graph * g, int src, int dst) {
+
+    if(size_error(src, dst, get_size(g))) return;
+    removel(g -> ns_list[src], dst);
+
+}
 
 double get_edge(graph * g, int src, int dst) {
-    return find(g -> ns_list[src], dst);
+    return findl(g -> ns_list[src], dst);
 }
 
 void print_graph(graph * g) {
@@ -236,7 +263,7 @@ void free_graph(graph * g) {
 int relax(node ** ns, node * checker, int id) {
 
     if(get_distance(ns[get_id(checker)]) > get_distance(checker) + get_distance(ns[id])) {
-        set_distance(ns[get_id(checker)], get_distance(checker));
+        set_distance(ns[get_id(checker)], get_distance(checker) + get_distance(ns[id]));
         set_parent(ns[get_id(checker)], id);
         return 1;
     }
@@ -247,6 +274,7 @@ return 0;
 node ** dijkstra(graph * g, int src) {
 
     int min_id = 0;
+    double trash = 0;
 
     node ** ns = create_nodes(get_size(g));
     set_distance(ns[src], 0);
@@ -258,14 +286,16 @@ node ** dijkstra(graph * g, int src) {
     }
     
     while(!isPQEmpty(hp)) {
-        // waiting for fix in pq
-        //TO DO!!!!!!!!!!!!!!!!!!!!!
-        int id = 0; //THIS ID SHOULD BE RETURNED FROM PQ DELMIN
-        node * checker = get_first(g -> ns_list[id]);
+        min_id = returnMinIndex(hp);
+        trash = removeFromPQ(hp);
+
+        if(get_distance(ns[min_id]) == INFINITY) break; 
+        
+        node * checker = get_first(g -> ns_list[min_id]);
         while(checker) {
-            if(relax(ns, checker, id)) changePositionInPQ(hp, get_id(checker), get_distance(ns[get_id(checker)]));
+            if(relax(ns, checker, min_id)) changePositionInPQ(hp, get_id(checker), get_distance(ns[get_id(checker)]));
+            checker = get_next(checker);
         }
-        break;
     }
 
     destroyPQ(hp);
