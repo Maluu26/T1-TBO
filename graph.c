@@ -286,8 +286,7 @@ node ** dijkstra(graph * g, int src) {
     }
     
     while(!isPQEmpty(hp)) {
-        min_id = returnMinIndex(hp);
-        trash = removeFromPQ(hp);
+        min_id = removeFromPQ(hp);
 
         if(get_distance(ns[min_id]) == INFINITY) break; 
         

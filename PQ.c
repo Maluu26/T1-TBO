@@ -121,7 +121,7 @@ int removeFromPQ(PQ *queue){
     
     queue->size--;
     fixDown(queue, 1);
-    return queue->heap[1].index;
+    return queue->heap[queue->size+1].index;
 
 }
 
