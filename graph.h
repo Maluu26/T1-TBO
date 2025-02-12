@@ -1,9 +1,46 @@
+#ifndef graph_h
+#define graph_h
+
 #include <stdio.h>
 #include <stdlib.h>
 
 typedef struct node node;
 
 typedef struct graph graph;
+
+/**
+ * Gets the index of a node
+ * @param n node to get id of
+ * @return node's id
+ */
+int get_id(node * n);
+
+/**
+ * Gets the minimal distance of a node
+ * @param n node to get distance of
+ * @return node's distance
+ */
+double get_distance(node * n);
+
+/**
+ * Gets the parent of a node
+ * @param n node to get parent of
+ * @return node's parent
+ */
+int get_parent(node * n);
+
+/**
+ * Frees a node
+ * @param n node to free
+ */
+void free_node(node * n);
+
+/**
+ * Frees an array of nodes
+ * @param n node array
+ * @param size array's size
+ */
+void free_nodes(node ** n, int size);
 
 /**
  * Creates a graph
@@ -70,3 +107,5 @@ node ** dijkstra(graph * g, int src);
  * @param size size of the array
  */
 void free_nodes(node ** n, int size);
+
+#endif
