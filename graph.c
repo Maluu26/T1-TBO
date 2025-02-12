@@ -33,7 +33,7 @@ node * create_node(int id, double dist, int prt) {
     node * n = (node *) calloc(1, sizeof(node));
     n -> id = id;
     n -> dist = dist;
-    n -> prt;
+    n -> prt = prt;
 
 return n;
 }
@@ -274,7 +274,6 @@ return 0;
 node ** dijkstra(graph * g, int src) {
 
     int min_id = 0;
-    double trash = 0;
 
     node ** ns = create_nodes(get_size(g));
     set_distance(ns[src], 0);

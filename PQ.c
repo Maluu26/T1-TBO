@@ -64,6 +64,8 @@ int findNode(int *vet, int value, int maxnodes){
             if(vet[i]==value) return i;
         }
     }
+    return 0;
+
 }
 void fixUp(PQ *queue, int node, int i){
    
