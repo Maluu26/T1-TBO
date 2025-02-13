@@ -68,11 +68,10 @@ int main(int argc, char *argv[]){
             }
         } 
     }
-    
+
     node ** minimum_path = dijkstra(g, source_node);
     qsort(minimum_path, size, sizeof(node *), compare_nodes);
-    
-    //print_graph(g);
+
     print_path_on_file(minimum_path, size, output_file);
     
     free_graph(g);
