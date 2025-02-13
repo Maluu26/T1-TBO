@@ -15,14 +15,21 @@ int main(int argc, char *argv[]){
     sprintf(output_name, "%s", argv[2]);
 
     input_file = fopen(input_name, "r");
+    output_file = fopen(output_name, "w");
+    
     if (!input_file) {
         printf("Error opening the file %s!\n", input_name);
         return 1;
     }
+    
+    if (!output_file) {
+        printf("Error creating the file %s!\n", output_name);
+        return 1;
+    }
 
-    char source_node[7], bomb[7];
+    char node_name[7], bomb[7];
     double dist=0;
-    int size=1;
+    int size=1, source_node;
 
     //Read and discard the firts line and the firts node's name 
     fscanf(input_file, "%*[^\n]%*c");
@@ -42,32 +49,36 @@ int main(int argc, char *argv[]){
     rewind(input_file);
 
     //Read the source node
-    fscanf(input_file, "%[^\n]\n", source_node); // linha provisória!
+    fscanf(input_file, "%[^_]_", node_name); 
+    fscanf(input_file, "%d%*c", &source_node);
+    
     for(int i=0; i < size; i++){
-        
         //Discard the name of the node
         fscanf(input_file, "%*[^,],");
         
-        for(int j=0; j < size; j++){
-            if(i == j) insert_edge(g, i, j, 0);
-            
-            else{
+        for(int j=0; j < size; j++){            
+            if(i != j){
                 if(fscanf(input_file, "%lf", &dist) == 1){
-                    insert_edge(g, i, j, dist);
+                    if(dist) insert_edge(g, i, j, dist);
                 }
                 else {
                     fscanf(input_file, "%s", bomb);
-                    insert_edge(g, i, j, 0);
                 }
-                fscanf(input_file, "%[ \n,]", bomb);
+                fscanf(input_file, "%*[ \n,]");
             }
-            
         } 
     }
     
+    node ** minimum_path = dijkstra(g, source_node);
+    qsort(minimum_path, size, sizeof(node *), compare_nodes);
+    
     //print_graph(g);
-
-    free(g);
+    print_path_on_file(minimum_path, size, output_file);
+    
+    free_graph(g);
+    free_nodes(minimum_path, size);
     fclose(input_file);
+    fclose(output_file);
+    
     return 0;
 }

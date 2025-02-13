@@ -300,3 +300,26 @@ node ** dijkstra(graph * g, int src) {
 
 return ns;
 }
+
+int compare_nodes(const void *a, const void *b){
+    node *n1 = *(node **)a;
+    node *n2 = *(node **)b;
+    return n1->dist - n2->dist;
+}
+
+void print_path_on_file(node **path, int size, FILE *file){
+    for(int i=0; i < size; i++){
+        fprintf(file, "SHORTEST PATH TO node_%d: \n", get_id(path[i]));
+     
+    /*    //node *aux = pai de path[i];
+        while(aux != NULL){
+            fprintf(file, "node_%d ", get_parent(aux));
+            
+            //aux = pai de aux;
+            if(aux){
+                fprintf(file, "<- ");
+            }
+            fprintf(file, "(Distance: %.2f)\n", (float)get_distance(path[i]));
+        }*/
+    }
+}

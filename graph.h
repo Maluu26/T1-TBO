@@ -108,4 +108,8 @@ node ** dijkstra(graph * g, int src);
  */
 void free_nodes(node ** n, int size);
 
+int compare_nodes(const void *a, const void *b);
+
+void print_path_on_file(node **path, int size, FILE *file);
+
 #endif
