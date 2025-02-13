@@ -24,11 +24,11 @@ return 0;
 struct node {
     int id;
     double dist;
-    int prt;
+    node * prt;
     node * next;
 };
 
-node * create_node(int id, double dist, int prt) {
+node * create_node(int id, double dist, node * prt) {
 
     node * n = (node *) calloc(1, sizeof(node));
     n -> id = id;
@@ -43,7 +43,7 @@ node ** create_nodes(int size) {
     node ** ns = (node **) calloc(size, sizeof(node *));
 
     for(int i = 0; i < size; i++) {
-        ns[i] = create_node(i, INFINITY, -1);
+        ns[i] = create_node(i, INFINITY, NULL);
     }
 
 return ns;
@@ -57,7 +57,7 @@ double get_distance(node * n) {
     return n -> dist;
 }
 
-int get_parent(node * n) {
+node * get_parent(node * n) {
     return n -> prt;
 }
 
@@ -69,7 +69,7 @@ void set_distance(node * n, double new_distance) {
     n -> dist = new_distance;
 }
 
-void set_parent(node * n, int prt_id) {
+void set_parent(node * n, node * prt_id) {
     n -> prt = prt_id;
 }
 
@@ -111,7 +111,7 @@ void init_list(list * l) {
 
 void insertl(list * l, int id, double dist) {
     
-    node * n = create_node(id, dist, -1);
+    node * n = create_node(id, dist, NULL);
 
     if(l -> first == NULL) {
         l -> first = n;
@@ -198,6 +198,7 @@ struct graph {
     list ** ns_list;
 };
 
+// Our graph is an array os lists, this way we can index a node and find its connections through the list
 graph * create_graph(int size) {
 
     if(size <= 0) {
@@ -260,11 +261,12 @@ void free_graph(graph * g) {
 
 }
 
+// Relax checks if the current distance from src in
 int relax(node ** ns, node * checker, int id) {
 
     if(get_distance(ns[get_id(checker)]) > get_distance(checker) + get_distance(ns[id])) {
         set_distance(ns[get_id(checker)], get_distance(checker) + get_distance(ns[id]));
-        set_parent(ns[get_id(checker)], id);
+        set_parent(ns[get_id(checker)], ns[id]);
         return 1;
     }
 
@@ -277,7 +279,7 @@ node ** dijkstra(graph * g, int src) {
 
     node ** ns = create_nodes(get_size(g));
     set_distance(ns[src], 0);
-    set_parent(ns[src], src);
+    set_parent(ns[src], ns[src]);
 
     PQ * hp = createPQ(get_size(g));
     for(int i = 0; i < get_size(g); i++) {
@@ -304,22 +306,26 @@ return ns;
 int compare_nodes(const void *a, const void *b){
     node *n1 = *(node **)a;
     node *n2 = *(node **)b;
-    return n1->dist - n2->dist;
+    if(n1 -> dist > n2 -> dist) return 1;
+    else if(n1 -> dist < n2 -> dist) return -1;
+    return 0;
+}
+
+void print_path(FILE * file, node * n) {
+    if(get_id(get_parent(n)) == get_id(n)) {
+        fprintf(file, "node_%d ", get_id(n));
+        return;
+    }
+    fprintf(file, "node_%d <- ", get_id(n));    
+    print_path(file, get_parent(n));
 }
 
 void print_path_on_file(node **path, int size, FILE *file){
-    for(int i=0; i < size; i++){
-        fprintf(file, "SHORTEST PATH TO node_%d: \n", get_id(path[i]));
-     
-    /*    //node *aux = pai de path[i];
-        while(aux != NULL){
-            fprintf(file, "node_%d ", get_parent(aux));
-            
-            //aux = pai de aux;
-            if(aux){
-                fprintf(file, "<- ");
-            }
-            fprintf(file, "(Distance: %.2f)\n", (float)get_distance(path[i]));
-        }*/
+
+    fprintf(file, "SHORTEST PATH TO node_%d: node_%d <- node_%d (Distance: %.2f)\n", get_id(path[0]), get_id(path[0]), get_id(path[0]), get_distance(path[0]));
+    for(int i = 1; i < size; i++){
+        fprintf(file, "SHORTEST PATH TO node_%d: ", get_id(path[i]));
+            print_path(file, path[i]);
+            fprintf(file, "(Distance: %.2f)\n", get_distance(path[i]));
     }
 }
