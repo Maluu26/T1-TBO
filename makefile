@@ -38,7 +38,7 @@ run:
 	@ echo $(CYAN)
 	@ echo "Executando programa ..."
 	@ echo $(RESET)
-	@ ./$(NAME_PROGRAM)
+	@ ./$(NAME_PROGRAM) $(f)
 
 test: clean all run
 
@@ -46,7 +46,7 @@ valgrind:
 	@ echo $(YELLOW)
 	@ echo "Rodando valgrind ..."
 	@ echo $(RESET)
-	@ valgrind ./$(NAME_PROGRAM)
+	@ valgrind ./$(NAME_PROGRAM) $(f)
 
 clean: 
 	@ echo $(WHITE)
