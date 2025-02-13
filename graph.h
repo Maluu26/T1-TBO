@@ -27,7 +27,7 @@ double get_distance(node * n);
  * @param n node to get parent of
  * @return node's parent
  */
-int get_parent(node * n);
+node * get_parent(node * n);
 
 /**
  * Frees a node
@@ -108,8 +108,20 @@ node ** dijkstra(graph * g, int src);
  */
 void free_nodes(node ** n, int size);
 
+/**
+ * Compares which node has the biggest distance
+ * @param a node a
+ * @param b node b
+ * @return 1 if a is bigger, -1 if b is bigger, 0 if equal
+ */
 int compare_nodes(const void *a, const void *b);
 
+/**
+ * Prints a node array in a file
+ * @param path node array
+ * @param size array's size
+ * @param file file to print paths
+ */
 void print_path_on_file(node **path, int size, FILE *file);
 
 #endif
