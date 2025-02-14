@@ -1,3 +1,9 @@
+/*
+ * Primeiro Trabalho de Técnicas de Busca e Ordenação (2024/02)
+ * Feito por Eduardo Silva, Marcela Carpenter e Maria Luiza Reis
+ * Fevereiro de 2025
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "graph.h"

@@ -1,3 +1,17 @@
+/*
+ * Primeiro Trabalho de Técnicas de Busca e Ordenação (2024/02)
+ * Feito por Eduardo Silva, Marcela Carpenter e Maria Luiza Reis
+ * Fevereiro de 2025
+ */
+
+/**
+ * Informações gerais (Eduardo):
+ * 1. Esse arquivo deveria ter sido dividido em mais TADs (a lista podia ser genérica...), 
+ *    mas como tudo acabou ficando entrelaçado, decidi manter em um único mesmo
+ * 2. Apenas as funções mais relevantes (no caso, as referentes a Dijkstra) foram comentadas
+ *    e estão mais ao fim desse arquivo
+ */
+
 #include "graph.h"
 #include "colors.h"
 #include <math.h>
@@ -19,7 +33,7 @@ int size_error(int src, int dst, int size) {
 return 0;
 }
 
-// NODE RELATED CODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// Código dos Nós
 
 struct node {
     int id;
@@ -81,6 +95,7 @@ void free_node(node * n) {
     free(n);
 }
 
+// Essa função remove os nós recursivamente na lista
 void free_nodes_list(node * n) {
     if(get_next(n) != NULL) free_nodes_list(get_next(n));
     free(n);
@@ -95,7 +110,7 @@ void free_nodes(node ** n, int size) {
 
 }
 
-// LIST RELATED CODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// Código da Lista
 
 typedef struct list list;
 
@@ -191,14 +206,14 @@ void free_list(list * l) {
 
 }
 
-// GRAPH RELATED CODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// Código do Grafo
 
 struct graph {
     int size;
     list ** ns_list;
 };
 
-// Our graph is an array os lists, this way we can index a node and find its connections through the list
+// Nosso grafo é uma vetor de listas, assim podemos indexar um nó e procurar suas conexões caminhando na lista
 graph * create_graph(int size) {
 
     if(size <= 0) {
@@ -261,7 +276,7 @@ void free_graph(graph * g) {
 
 }
 
-// Relax checks if the current distance from src in
+// Verifica se a distância atual no vetor de nós é menor que a encontrada atualmente, se for, troca o valor e seta o novo pai
 int relax(node ** ns, node * checker, int id) {
 
     if(get_distance(ns[get_id(checker)]) > get_distance(checker) + get_distance(ns[id])) {
@@ -273,24 +288,54 @@ int relax(node ** ns, node * checker, int id) {
 return 0;
 }
 
+/**
+ * A implementação dessa função foi feita após uma aula de Teoria dos Grafos e, portanto, segue
+ * um pseudocódigo sugerido pelo professor Berilhes Borges Garcia, sendo ele: 
+ * 
+ * Dijkstra(G, w, s)
+ *  for cada vértice v pertencente G.V
+ *      v.pai <- Null
+ *      v.d <- Infinito
+ *  s.d <- 0
+ * 
+ *  Construa_Fila_Prioridade(Q, G.V)
+ *  
+ *  while Q != VAZIO :
+ *      u <- Extrair_Minimo(Q)
+ *      for cada vértice v adjacente à u
+ *      Relaxe((u, v))
+ *      Decresça_Chave(Q, v, v.d)
+ * 
+ * Resumidamente, esse pseudocódigo cria uma fila de prioridades em que os vértices são inseridos nela com valores infinitos, a exceção do source.
+ * Este recebe distância 0 e é o primeiro da fila. Cada vez que um valor é removido da fila, os outros vértices tem suas distâncias atualizadas
+ * caso sejam alcançados pelo anterior analisado. A função Relaxe identifica se um valor menor foi encontrado e o atualiza. Isso é feito até que a
+ * fila esteja vazia. Cada vértice analisado é removido da fila.
+ */
 node ** dijkstra(graph * g, int src) {
 
     int min_id = 0;
 
+    // Um vetor de nós é criado para armazenar os vértices do grafo, esse vetor será retornado com os menores caminhos
     node ** ns = create_nodes(get_size(g));
     set_distance(ns[src], 0);
     set_parent(ns[src], ns[src]);
 
+    // A fila com prioridade é criada e todos os vértices são inseridos nela também
     PQ * hp = createPQ(get_size(g));
     for(int i = 0; i < get_size(g); i++) {
         insertIntoPQ(hp, get_distance(ns[i]), i);
     }
     
+    // Enquanto a fila não está vazia, continuamos verificando
     while(!isPQEmpty(hp)) {
+
+        // Recebemos o index do primeiro item (o que possui menor distância) e ele é removido da fila
         min_id = removeFromPQ(hp);
 
+        // Apenas para casos de verificação, se chegarmos em um vértice com valor infinito na fila, podemos parar também
         if(get_distance(ns[min_id]) == INFINITY) break; 
         
+        // O checker é um nó temporário que vai rodar a lista de adjacências do vértice analisado e relaxá-los quando necessário
         node * checker = get_first(g -> ns_list[min_id]);
         while(checker) {
             if(relax(ns, checker, min_id)) changePositionInPQ(hp, get_id(checker), get_distance(ns[get_id(checker)]));
@@ -298,11 +343,13 @@ node ** dijkstra(graph * g, int src) {
         }
     }
 
+    // Liberação de memória da fila
     destroyPQ(hp);
 
 return ns;
 }
 
+// Função de comparação para uso do qsort nativo na main
 int compare_nodes(const void *a, const void *b){
     node *n1 = *(node **)a;
     node *n2 = *(node **)b;
@@ -311,18 +358,23 @@ int compare_nodes(const void *a, const void *b){
     return 0;
 }
 
+// Os caminhos são printados recursivamente em arquivo, acessando os seus pais até chegar no source
 void print_path(FILE * file, node * n) {
+
     if(get_id(get_parent(n)) == get_id(n)) {
         fprintf(file, "node_%d ", get_id(n));
         return;
     }
     fprintf(file, "node_%d <- ", get_id(n));    
     print_path(file, get_parent(n));
+
 }
 
 void print_path_on_file(node **path, int size, FILE *file){
 
+    // O primeiro item é printado de forma distinta no arquivo, pois ele é o único que aponta pra si mesmo, já o restante entra no for
     fprintf(file, "SHORTEST PATH TO node_%d: node_%d <- node_%d (Distance: %.2f)\n", get_id(path[0]), get_id(path[0]), get_id(path[0]), get_distance(path[0]));
+    
     for(int i = 1; i < size; i++){
         fprintf(file, "SHORTEST PATH TO node_%d: ", get_id(path[i]));
             print_path(file, path[i]);
