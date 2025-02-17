@@ -110,6 +110,14 @@ void free_graph(graph * g);
 node ** dijkstra(graph * g, int src);
 
 /**
+ * Finds the shortest path from a node to all the other ones
+ * @param g graph to analyze
+ * @param src source node
+ * @return a node array with all the paths unsorted
+ */
+node ** bad_dijkstra(graph * g, int src);
+
+/**
  * Free the nodes array from Dijkstra function
  * @param node array of nodes
  * @param size size of the array

@@ -17,6 +17,7 @@
 #include "colors.h"
 #include <math.h>
 #include "PQ.h"
+#include "queue.h"
 
 int size_error(int src, int dst, int size) {
 
@@ -346,6 +347,44 @@ node ** dijkstra(graph * g, int src) {
 
     // Liberação de memória da fila
     destroyPQ(hp);
+
+return ns;
+}
+
+node ** bad_dijkstra(graph * g, int src) {
+
+    int min_id = 0;
+
+    // Um vetor de nós é criado para armazenar os vértices do grafo, esse vetor será retornado com os menores caminhos
+    node ** ns = create_nodes(get_size(g));
+    set_distance(ns[src], 0);
+    set_parent(ns[src], ns[src]);
+
+    // A fila com prioridade é criada e todos os vértices são inseridos nela também
+    queue * q = create_queue(get_size(g));
+    for(int i = 0; i < get_size(g); i++) {
+        insert_into_queue(q, get_distance(ns[i]), i);
+    }
+    
+    // Enquanto a fila não está vazia, continuamos verificando
+    while(!is_queue_empty(q)) {
+
+        // Recebemos o index do primeiro item (o que possui menor distância) e ele é removido da fila
+        min_id = remove_from_queue(q);
+
+        // Apenas para casos de verificação, se chegarmos em um vértice com valor infinito na fila, podemos parar também
+        if(get_distance(ns[min_id]) == INFINITY) break; 
+        
+        // O checker é um nó temporário que vai rodar a lista de adjacências do vértice analisado e relaxá-los quando necessário
+        node * checker = get_first(g -> ns_list[min_id]);
+        while(checker) {
+            if(relax(ns, checker, min_id)) change_distance_in_queue(q, get_id(checker), get_distance(ns[get_id(checker)]));
+            checker = get_next(checker);
+        }
+    }
+
+    // Liberação de memória da fila
+    free_queue(q);
 
 return ns;
 }
