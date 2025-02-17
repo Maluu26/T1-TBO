@@ -10,79 +10,82 @@
 typedef struct pq PQ;
 
 /***
- * Verifies if the priority queue is valid
- * @param queue priority queue
+ * Verifica se a fila de prioridades é válida
+ * @param queue fila de prioridades
  */
 bool valid_queue(PQ *queue);
 /***
- * Verifies if the priority queue is empty
- * @param queue priority queue
+ * Verifica se a fila de prioridades está vazia
+ * @param queue fila de prioridades
  */
 bool isPQEmpty(PQ *queue);
 /***
- * Creates a priority queue
- * @param size size of the priority queue, according to the number of nodes;
- * @return a priority queue;
+ * Cria a fila de prioridades
+ * @param size tamanho da fila de prioridades, de acordo com o
+ * número de nós;
+ * @return a fila de prioridades;
  */
 PQ *createPQ(int size);
 /***
  *
- * @param queue priority queue
- * @param node the node that needs to put in order
- * @param i the position that fix up will start from
+ * @param queue fila de prioridades
+ * @param node o nó que precisa ser ordenado
+ * @param i a posição de onde o fix up vai começar
  * 
  */
 void fixUp(PQ *queue, int node,int i);
 
 /*** 
- * Puts a new value in the priority queue
- * @param queue priority queue
- * @param minDistance the new value
- * @param node the node that needs to put in order
+ * Coloca um novo valor na fila de prioridades
+ * @param queue fila de prioridades
+ * @param minDistance o novo valor
+ * @param node o node que precisa ser colocado em ordem
  * 
  */
 
 void insertIntoPQ(PQ *queue,float minDistance, int node);
 /***
- * The function will adjust the position of the element on index k
- * @param queue priority queue
- * @param k start of the function
+ * A função irá ajustar a posição do elemento no index k
+ * @param queue fila de prioridades
+ * @param k podicao de inicio da função
  */
 void fixDown(PQ *queue, int k);
 
 /*** 
- * Returns the minimal value of the priority queue and decreases its size;
- * @param queue priority queue
- * @return the node associated with the minimal value of the priority queue
+ * Retorna o node que era o valor mínimo da fila de prioridades e diminui o tamanho dela;
+ * @param queue fila de prioridades
+ * @return o node removido associado com o valor mínimo da fila de prioridades 
  */
 int removeFromPQ(PQ *queue);
 /***
- * Alters the previous distance of a node to a new smaller one and adjusts its position ;
- * @param queue priority queue
- * @param  nodeIndex position of the node inside the priority queue
- * @param distance the new smaller distance
+ * Altera a distância anterior de um node para uma menor e a justa a sua posição na heap ;
+ * @param queue fila de prioridades
+ * @param  nodeIndex posição do node dentro da fila de prioridades
+ * @param distance a nova menor distância
  * 
  */
 void changePositionInPQ(PQ *queue, int nodeIndex, float distance);
 /***
- * @param queque priority queue
- * @return size of the priority queue
+ * @param queque fila de prioridades
+ * @return tamanho da fila de prioridades
  */
 int getPQSize(PQ *queue);
 /***
- * @param queque priority queue
- * @return the minimal value inside of the priority queue
+ * Retorna a distância mínima da heap;
+ * @param queque fila de prioridades
+ * @return the minimal value inside of the fila de prioridades
  */
 float returnMinDist(PQ *queue);
 
 /***
- * @param queque priority queue
- * @return node of the minimal value inside of the priority queue
+ * Retorna o node de distância mínima da heap;
+ * @param queque fila de prioridades
+ * @return node of the minimal value inside of the fila de prioridades
  */
 int returnMinIndex(PQ *queue);
 /***
- * Frees the memory space occupied
- * @param queque priority queue
+ * Libera o espaço de memória ocupado pela fila de prioridades
+ * @param queque fila de prioridades
  * 
  */
 void destroyPQ(PQ *queue);

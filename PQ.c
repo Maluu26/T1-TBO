@@ -1,9 +1,14 @@
 /*
  * Primeiro Trabalho de Técnicas de Busca e Ordenação (2024/02)
- * Feito por Eduardo Silva, Marcela Carpenter e Maria Luiza Reis
+ * Feito por Eduardo Silva(2023100580), Marcela Carpenter(2023100260)
+ *  e Maria Luiza Reis(2023101579)
  * Fevereiro de 2025
  */
 
+/*Como essa implementação de fila de prioridades segue o formarto seguido
+em sala, com poucas alterações, e ponto h está comentado são feitos poucos
+comentários neste arquivo
+*/
 #include"PQ.h"
 #include"item.h"
 #include<stdio.h>
@@ -43,7 +48,12 @@ bool isPQEmpty(PQ *queue){
     return (queue->size == 0);
 
 }
-
+/***
+ * Nessa funcao é criada a fila de prioridades com os seguintes campos:
+ * tamanho atual (size), tamanho maximo (maxnodes), heap (uma heap com as
+ * informacoes de distancia e a identificacao do node), queuePositions (um vetor
+ * auxiliar que fala em qual posicao da heap cada node esta)
+ */
 PQ *createPQ(int size){
 
     PQ *heap = malloc(sizeof(PQ));
@@ -64,15 +74,6 @@ PQ *createPQ(int size){
 
 }
 
-int findNode(int *vet, int value, int maxnodes){
-    if(vet){
-        for(int i = 0; i<maxnodes;i++){
-            if(vet[i]==value) return i;
-        }
-    }
-    return 0;
-
-}
 void fixUp(PQ *queue, int node, int i){
    
    if(!valid_queue(queue)) return;
@@ -88,7 +89,7 @@ void fixUp(PQ *queue, int node, int i){
 }
 void insertIntoPQ(PQ *queue,float minDistance, int node){
     
-    if(!valid_queue(queue)) return;
+    if(!valid_queue(queue)|| queue->size == queue->maxnodes)  return;
     queue->size++;
     queue->heap[queue->size].distance = minDistance;
     queue->heap[queue->size].index = node;
@@ -114,7 +115,7 @@ void fixDown(PQ *queue, int k){
         int p2 = queue->heap[k].index;
         exchPQ(queue->heap,k, j);
         exch(queue->queuePositions[p1], queue->queuePositions[p2]);
-         k = j;
+        k = j;
     }
     
 }
@@ -132,7 +133,10 @@ int removeFromPQ(PQ *queue){
     return queue->heap[queue->size+1].index;
 
 }
-
+/***
+ * Coloca o novo menor valor e chama o fixUp para ajustar a posição dele
+ * na fila de prioridades
+ */
 void changePositionInPQ(PQ *queue, int nodeIndex, float distance){
 
     if(!valid_queue(queue)) return;
@@ -149,13 +153,17 @@ int getPQSize(PQ *queue){
     return queue->size;
    
 }
-
+/***
+    Retorna a distância mínima da heap;
+ */
 float returnMinDist(PQ *queue){
    
     if(!valid_queue(queue)) return -1;
     return queue->heap[1].distance;
 
-}
+}/***
+    Retorna o node que é o valor mínimo da heap;
+ */
 int returnMinIndex(PQ *queue){
    
     if(!valid_queue(queue)) return -1;
