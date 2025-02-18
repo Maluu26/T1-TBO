@@ -360,8 +360,8 @@ node ** bad_dijkstra(graph * g, int src) {
     set_distance(ns[src], 0);
     set_parent(ns[src], ns[src]);
 
-    // A fila com prioridade é criada e todos os vértices são inseridos nela também
-    queue * q = create_queue(get_size(g));
+    // A fila é criada e todos os vértices são inseridos nela também
+    queue * q = create_queue();
     for(int i = 0; i < get_size(g); i++) {
         insert_into_queue(q, get_distance(ns[i]), i);
     }
