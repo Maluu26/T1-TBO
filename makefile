@@ -1,11 +1,12 @@
 #MAKEFILE By: Afonso Salvador de Magalhaes
 #With support of Kevin Carvalho de Jesus and João Paulo Moura
 
-NAME_PROGRAM = prog
+NAME_PROGRAM = trab1
 CC = gcc
 FLAGS = -lm -pedantic -Wall 
 C_FILES = $(wildcard *.c)
 O_FILES = $(patsubst %.c, %.o, $(C_FILES))
+COMMON_C_FILES = graph.c PQ.c queue.c
 
 all: $(O_FILES) create_executable
 
@@ -19,20 +20,20 @@ RESET = "\033[0m"
 main.o: main.c
 	@ echo $(CYAN)
 	@ echo "Compilando main.c ..."
-	@ $(CC) -c $< $(FLAGS)
 	@ echo $(RESET)
+	@ $(CC) -c $< $(FLAGS)
 
 %.o: %.c %.h
 	@ echo $(CYAN)
 	@ echo "Compilando $< ..."
-	@ $(CC) -c $< $(FLAGS)
 	@ echo $(RESET)
+	@ $(CC) -c $< $(FLAGS)
 
 create_executable: 
 	@ echo $(CYAN)
 	@ echo "Criando executavel..."
-	@ $(CC) -o $(NAME_PROGRAM) $(O_FILES) $(FLAGS)
 	@ echo $(RESET)
+	@ $(CC) -o $(NAME_PROGRAM) $(O_FILES) $(FLAGS)
 
 run: 
 	@ echo $(CYAN)
@@ -51,11 +52,25 @@ valgrind:
 clean: 
 	@ echo $(WHITE)
 	@ echo "Limpando arquivos temporarios ..."
-	@ rm -rf $(NAME_PROGRAM) $(O_FILES)
 	@ echo $(RESET)
+	@ rm -rf $(NAME_PROGRAM) $(O_FILES)
 
 clean_test:
 	@ echo $(RED)
 	@ echo "Removendo arquivos gerais ..."
-	@ rm -rf $(NAME_PROGRAM) $(O_FILES) *.txt
 	@ echo $(RESET)
+	@ rm -rf $(NAME_PROGRAM) $(O_FILES) *.txt
+
+#Particular of this repository
+
+good:
+	@ echo $(CYAN)
+	@ echo "Criando executável..."
+	@ echo $(RESET)
+	@ $(CC) -o $(NAME_PROGRAM) good.c $(COMMON_C_FILES) $(FLAGS)
+
+bad:
+	@ echo $(CYAN)
+	@ echo "Criando executável..."
+	@ echo $(RESET)
+	@ $(CC) -o $(NAME_PROGRAM) bad.c $(COMMON_C_FILES) $(FLAGS)
