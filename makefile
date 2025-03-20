@@ -6,7 +6,7 @@ CC = gcc
 FLAGS = -lm -pedantic -Wall 
 C_FILES = $(wildcard *.c)
 O_FILES = $(patsubst %.c, %.o, $(C_FILES))
-COMMON_C_FILES = graph.c PQ.c queue.c
+COMMON_C_FILES = graph.c pq.c queue.c
 
 all: $(O_FILES) create_executable
 

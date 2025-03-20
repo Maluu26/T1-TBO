@@ -16,7 +16,7 @@
 #include "graph.h"
 #include "colors.h"
 #include <math.h>
-#include "PQ.h"
+#include "pq.h"
 #include "queue.h"
 
 int size_error(int src, int dst, int size) {
@@ -323,16 +323,16 @@ node ** dijkstra(graph * g, int src) {
     set_parent(ns[src], ns[src]);
 
     // A fila com prioridade é criada e todos os vértices são inseridos nela também
-    PQ * hp = createPQ(get_size(g));
+    pq * hp = create_pq(get_size(g));
     for(int i = 0; i < get_size(g); i++) {
-        insertIntoPQ(hp, get_distance(ns[i]), i);
+        insert_into_pq(hp, get_distance(ns[i]), i);
     }
     
     // Enquanto a fila não está vazia, continuamos verificando
-    while(!isPQEmpty(hp)) {
+    while(!is_pq_empty(hp)) {
 
         // Recebemos o index do primeiro item (o que possui menor distância) e ele é removido da fila
-        min_id = removeFromPQ(hp);
+        min_id = remove_from_pq(hp);
 
         // Apenas para casos de verificação, se chegarmos em um vértice com valor infinito na fila, podemos parar também
         if(get_distance(ns[min_id]) == INFINITY) break; 
@@ -340,13 +340,13 @@ node ** dijkstra(graph * g, int src) {
         // O checker é um nó temporário que vai rodar a lista de adjacências do vértice analisado e relaxá-los quando necessário
         node * checker = get_first(g -> ns_list[min_id]);
         while(checker) {
-            if(relax(ns, checker, min_id)) changePositionInPQ(hp, get_id(checker), get_distance(ns[get_id(checker)]));
+            if(relax(ns, checker, min_id)) position_in_pqchange_(hp, get_id(checker), get_distance(ns[get_id(checker)]));
             checker = get_next(checker);
         }
     }
 
     // Liberação de memória da fila
-    destroyPQ(hp);
+    destroy_pq(hp);
 
 return ns;
 }
