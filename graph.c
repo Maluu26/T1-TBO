@@ -340,7 +340,7 @@ node ** dijkstra(graph * g, int src) {
         // O checker é um nó temporário que vai rodar a lista de adjacências do vértice analisado e relaxá-los quando necessário
         node * checker = get_first(g -> ns_list[min_id]);
         while(checker) {
-            if(relax(ns, checker, min_id)) position_in_pqchange_(hp, get_id(checker), get_distance(ns[get_id(checker)]));
+            if(relax(ns, checker, min_id)) change_position_in_pq(hp, get_id(checker), get_distance(ns[get_id(checker)]));
             checker = get_next(checker);
         }
     }
